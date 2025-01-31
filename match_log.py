@@ -16,7 +16,7 @@ class match_log:
         return {
             "decklist": self.decklist,
             "match_result": self.match_result,
-            "group_id": self.group_id
+            "group_id": self.group_id 
         }
 
 
