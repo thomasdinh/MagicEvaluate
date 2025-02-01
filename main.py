@@ -36,5 +36,5 @@ def add_match_log():
     match_logs.clear()
     return match_logs
 
-def get_best_wr_deck(top_ranks, group_id = None):
+def get_best_wr_deck(top_ranks=1, group_id = None):
     return "Load"
