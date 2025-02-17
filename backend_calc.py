@@ -16,7 +16,7 @@ def read_match_logs(filepath = None):
 
     return match_df
 
-def top_deck_wr(ranks = 1, exclude_draw = False):
+def calc_deck_wr(ranks = 1, exclude_draw = False):
     # You can define the 'wins' and 'lose' as strings
     wins = "wins"
     lose = "lose"
@@ -65,4 +65,4 @@ def did_deck_lose_result(deck_list, match_result, deckname):
     
 
 if __name__ == "__main__":
-    top_deck_wr()
+    calc_deck_wr()

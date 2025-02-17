@@ -1,0 +1,4 @@
+pandas
+discord.py
+audioop-lts
+python-dotenv
