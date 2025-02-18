@@ -2,13 +2,14 @@ import discord
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
+from backend_calc import find_best_decks
 
 description = '''Bot to evaluate MTG matches in a play group
 '''
 load_dotenv()
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-CHANNEL = os.getenv('CHANNEL')
+CHANNEL = 1341019500958449674 # chnage to your channel
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
@@ -26,5 +27,9 @@ async def on_ready():
 @bot.command()
 async def isReady(ctx):
     await ctx.send(str('MTG Bot is ready!'))
+
+@bot.command()
+async def top_deck(ctx , min_matches=3,rank=1):
+    await ctx.send(find_best_decks(least_matches= min_matches, top_placements= rank))
 
 bot.run(BOT_TOKEN)
