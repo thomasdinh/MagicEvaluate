@@ -3,8 +3,6 @@ import numpy as np
 import json
 
 default_match_log_path = "./match_data/match_data.csv"
-top_wr_dic = {}
-top_wr_decklist = []
 
 
 def read_match_logs(filepath = None):
@@ -18,38 +16,31 @@ def read_match_logs(filepath = None):
 
     return match_df
 
-def calc_deck_wr( exclude_draw = False):
-    # You can define the 'wins' and 'lose' as strings
-    wins = "wins"
-    lose = "lose"
+def map_deck_results(exclude_draw=False):
+    wins_key = "wins"
+    losses_key = "lose"
     match_df = read_match_logs()
-    wr_dict = {}
-    #selected_col = ['Decklist','match_result']
-    match_deck_list = match_df['Decklist'].values
-    match_deck_wr = match_df['match_result'].values
-    for i in range(len(match_deck_list)):
-        # print(f'Match {i}:\---------------------')
-        # print(match_deck_list[i])
-        participated_decks = [match.strip().lower() for match in match_deck_list[i].strip().split(",")]
-        match_result =[int(x) for x in match_deck_wr[i].split(",")]
+    deck_result_dict = {}
+
+    match_deck_lists = match_df['Decklist'].values
+    match_deck_results = match_df['match_result'].values
+
+    for decks, results in zip(match_deck_lists, match_deck_results):
+        participated_decks = [deck.strip().lower() for deck in decks.strip().split(",")]
+        match_result = [int(x) for x in results.split(",")]
+        
+        if exclude_draw and find_draw(match_result):
+                continue  # Skip the rest of the loop for this match
+        
         for deck in participated_decks:
             
-            if deck in wr_dict:
-                #print(f'Update entry after Match {i}:')
-                #print(f'Deck: {deck}:wr_dict[{deck}]')
-                #print(wr_dict[deck])
-                wr_dict[deck][wins] += did_deck_win_result(participated_decks, match_result, deck )
-                wr_dict[deck][lose] += did_deck_lose_result(participated_decks, match_result, deck )
-                #print(f'Updated results of Deck: {deck}')
-                #print(wr_dict[deck])
-            if deck not in wr_dict:
-                #print(f'New entry for Deck: {deck}:wr_dict[{deck}]')
-                wr_dict[deck] = {wins: did_deck_win_result(participated_decks, match_result, deck ), lose :did_deck_lose_result(participated_decks, match_result, deck ) } 
-                #print(f'Updated results of Deck: {deck}:wr_dict{deck}')
-                #print(wr_dict[deck])
-      
-    # print(wr_dict)
-    return wr_dict
+            if deck not in deck_result_dict:
+                deck_result_dict[deck] = {wins_key: 0, losses_key: 0}
+
+            deck_result_dict[deck][wins_key] += did_deck_win_result(participated_decks, match_result, deck)
+            deck_result_dict[deck][losses_key] += did_deck_lose_result(participated_decks, match_result, deck)
+
+    return deck_result_dict
 
 
 def did_deck_win_result(deck_list, match_result , deckname):
@@ -64,36 +55,53 @@ def did_deck_lose_result(deck_list, match_result, deckname):
             return 1 - match_result[i] 
     return 0
 
+def find_draw(match_result):
+    occurrence = match_result.count(1)
+    if occurrence > 2:
+        return True
+    return False
+
 win_rates = {}
 
-def find_best_decks(least_matches = 3, top_placements = 1):
-    results = ''
-    wr_dict = calc_deck_wr()
-    for player, result in wr_dict.items():
+def find_best_decks(min_matches=3, top_placements=1):
+    win_rates = {}
+    top_deck_dict = map_deck_results()
+
+    # Calculate win rates for players with at least `min_matches` games
+    for deck, result in top_deck_dict.items():
         wins = result['wins']
-        lose = result['lose']
-        total_games = wins + lose
-        if total_games == 0:
-            win_rate = 0
-        else:
-            win_rate = wins/total_games
-        if total_games >= least_matches:
-            win_rates[player] = win_rate *100
-        # Print the win rates
-    # Sort the dictionary by win rate in descending order   
+        losses = result['lose']
+        total_games = wins + losses
+
+        if total_games >= min_matches:
+            win_rate = (wins / total_games) * 100 if total_games > 0 else 0
+            win_rates[deck] = win_rate
+
+    # Sort the dictionary by win rate in descending order
     sorted_win_rates = dict(sorted(win_rates.items(), key=lambda item: item[1], reverse=True))
-    '''for player, win_rate in sorted_win_rates.items():
-        print(f"{player}: {win_rate:.2f}")
-    '''
-    print(f"Top {top_placements} decks by win rate:")
+
+    # Prepare the results string
+    results = f"Top {top_placements} decks by win rate:\n"
     top_decks_list = list(sorted_win_rates.items())[:top_placements]
-    for player, win_rate in top_decks_list:
-        print(f'Deck: {player}, WR: {win_rate}')
-        results+=(f'Deck: {player}, WR: {win_rate}\n')
+
+    for deck, win_rate in top_decks_list:
+        deck_info = f'Deck: {deck.capitalize().ljust(18)} WR: {win_rate:.2f}%'
+        print(deck_info)
+        results += deck_info + '\n'
+
     return results
 
 
+def read_json_file(filepath):
+    try:
+        with open(filepath) as json_file:
+            json_data = json.load(json_file)
+            print("json_data")
+            return json_data
+    except:
+        print(f"No File found with name: {filepath}!")
     
 
 if __name__ == "__main__":
-    find_best_decks(3,3)
+    print(read_json_file("result_track.json"))
+    find_best_decks(3,40)
