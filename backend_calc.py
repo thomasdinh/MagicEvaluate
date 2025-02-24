@@ -25,6 +25,20 @@ def map_deck_results(exclude_draw=False):
     match_deck_lists = match_df['Decklist'].values
     match_deck_results = match_df['match_result'].values
 
+    deck_result_json = "deck_result.json"
+    if exclude_draw:
+        deck_result_json = "deck_result_no_draw.json"
+    try:
+        match_file = open(deck_result_json, 'r+')
+        print("found json file - loading data from json...")
+        deck_result_dict = json.load(match_file)
+        print("skipped calc")
+        return deck_result_dict
+    except IOError:
+        print("json file for analyzed match not found. creating new file")
+        
+    
+
     for decks, results in zip(match_deck_lists, match_deck_results):
         participated_decks = [deck.strip().lower() for deck in decks.strip().split(",")]
         match_result = [int(x) for x in results.split(",")]
@@ -39,7 +53,9 @@ def map_deck_results(exclude_draw=False):
 
             deck_result_dict[deck][wins_key] += did_deck_win_result(participated_decks, match_result, deck)
             deck_result_dict[deck][losses_key] += did_deck_lose_result(participated_decks, match_result, deck)
-
+        
+    with open(deck_result_json, 'w') as fp:
+        json.dump(deck_result_dict, fp, indent=4)    
     return deck_result_dict
 
 
@@ -103,5 +119,5 @@ def read_json_file(filepath):
     
 
 if __name__ == "__main__":
-    print(read_json_file("result_track.json"))
+    read_json_file("deck_result.json")
     find_best_decks(3,40)
