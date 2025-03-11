@@ -21,45 +21,55 @@ def read_match_logs(filepath = None):
 
 def load_deck_results(exclude_draw=False):
     
+    
     deck_result_json = "deck_result.json"
     
     if exclude_draw:
         deck_result_json = "deck_result_no_draw.json"
     try:
-
         # Load the data
         match_file = open(deck_result_json, 'r+')
+        
+        # Get the last modified time of the match_data.csv file
+        last_modified_str = modification_date(default_match_log_path)
+        last_modified_datetime = datetime.fromisoformat(f'{last_modified_str}')
+        # print(f'{default_match_log_path} last mod.:{last_modified_datetime}')
+        
         load_dotenv()
-
-        # Get the last modified time of the file
-        #last_match_date = find_date_last_entry_match_csv()
-        last_modified_time = modification_date(deck_result_json)
-        last_modified = datetime.fromisoformat(f'{last_modified_time}')
-        print(last_modified)
-
         # Get the last known modified time from the .env file
         last_known_modified_time_str = os.getenv('RESULT_LAST_MODIFIED')
         # Convert the string to a datetime object
-        last_known_modified_datetime = datetime.strptime(last_known_modified_time_str, "%Y-%m-%d %H:%M:%S")
+        last_known_modified_datetime = datetime.strptime(str(last_known_modified_time_str), "%Y-%m-%d %H:%M:%S.%f")
 
 
         if last_known_modified_time_str is None:    
             print("Environment variable RESULT_LAST_MODIFIED is not set or loaded from .env file.")
         else:
             # Convert the string to a datetime object
-            print("Last known modified time:", last_known_modified_datetime)
+            # print("Last known modified time:", last_known_modified_datetime)
+            print()
 
         #last_known_modified_datetime = datetime.fromisoformat(f'{last_known_modified_time_str}')
+        print(f'last modified: {last_modified_datetime}, last_known modified: {last_known_modified_datetime}, Were there changes? : {last_modified_datetime > last_known_modified_datetime}')
 
-        if( last_modified > last_known_modified_datetime):
-            print(f'The json has not been changed since the last time')
+        if( last_modified_datetime <= last_known_modified_datetime):
+            print(f'The match_data.csv has not been changed since the last time')
             print("found json file - loading data from json...")
             deck_result_dict = json.load(match_file)
             print("skipped calc")
             return deck_result_dict
         else:
-            print(f'The json has been changed since the last time. Recalculating')
-            deck_result_dict = calc_deck_results(deck_result_json, exclude_draw= exclude_draw)   
+            print(f'The match_data has been changed since the last time. Recalculating')
+            deck_result_dict = calc_deck_results(deck_result_json, exclude_draw= exclude_draw)
+            # .env changes
+            load_dotenv() 
+            os.environ['RESULT_LAST_MODIFIED'] = f'{last_modified_str}'
+            set_key('.env','RESULT_LAST_MODIFIED', str(last_modified_str))
+
+            # Verify the change
+            updated_value = os.getenv('RESULT_LAST_MODIFIED')
+            print(f"Updated RESULT_LAST_MODIFIED: {updated_value}")
+
             return deck_result_dict
     except IOError:
         print("json file for analyzed match not found. creating new file")
@@ -162,7 +172,6 @@ def read_json_file(filepath):
     try:
         with open(filepath) as json_file:
             json_data = json.load(json_file)
-            print("json_data")
             return json_data
     except:
         print(f"No File found with name: {filepath}!")
@@ -173,6 +182,4 @@ def modification_date(filename):
     return datetime.fromtimestamp(t)
 
 if __name__ == "__main__":
-    print(convert_str_to_date("03.03.25"))
-    read_json_file("deck_result.json")
-    find_best_decks(3,40,True)
+    find_best_decks(3,40)
