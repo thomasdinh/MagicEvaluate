@@ -43,8 +43,14 @@ def calc_best_wr_deck():
 
 
 @app.post("/add_match_log")
-def add_match_log(match_log=MatchLogModel):
-    match_logs.append(match_log)
+def add_match_log(match: MatchLogModel):
+    match_logs.append(match)
+    return match_logs
+
+
+@app.post("/matches/")
+async def create_match_log(match: MatchLogModel):
+    match_logs.append(match)
     return match_logs
 
 
