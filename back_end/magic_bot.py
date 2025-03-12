@@ -2,7 +2,7 @@ import discord
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
-from backend_calc import find_best_decks
+from back_end.backend_calc import find_best_decks
 
 description = '''Bot to evaluate MTG matches in a play group
 '''
@@ -30,6 +30,6 @@ async def isReady(ctx):
 
 @bot.command()
 async def top_deck(ctx , min_matches=3,rank=1):
-    await ctx.send(find_best_decks(least_matches= min_matches, top_placements= rank))
+    await ctx.send(find_best_decks(min_matches= min_matches, top_placements= rank))
 
 bot.run(BOT_TOKEN)

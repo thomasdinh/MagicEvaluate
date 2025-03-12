@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv, set_key
 from datetime import datetime
 
-default_match_log_path = "./match_data/match_data.csv"
+default_match_log_path = "../match_data/match_data.csv"
 
 
 def read_match_logs(filepath = None):
@@ -182,4 +182,4 @@ def modification_date(filename):
     return datetime.fromtimestamp(t)
 
 if __name__ == "__main__":
-    find_best_decks(3,40)
+    find_best_decks(0,40)
