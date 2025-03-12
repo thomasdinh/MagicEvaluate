@@ -2,3 +2,6 @@ pandas
 discord.py
 audioop-lts
 python-dotenv
+fastapi
+uvivorn
+pydantic

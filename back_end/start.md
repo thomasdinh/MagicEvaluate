@@ -11,7 +11,7 @@
 ```sh
 $> cd back_end
 $/back_end> python -m venv venv
-(venv) $/back_end> pip install requirements.txt
+(venv) $/back_end> pip install -r requirements.txt
 ```
 
 ### Afterwards to activate environment:
@@ -34,7 +34,7 @@ $/back_end> .\venv\Script\activate
 ```sh
 $> cd back_end
 $/back_end> python3 -m venv venv
-(venv) $/back_end> pip install requirements.txt
+(venv) $/back_end> pip install -r requirements.txt
 ```
 
 ### Afterwards to activate environment:

@@ -13,7 +13,7 @@ def read_match_logs(filepath = None):
     #print("Reading matchlogs")
     try:
         match_df = pd.read_csv(csv_filepath)
-        #clearprint(match_df)
+        # print(match_df)
     except FileNotFoundError:
         print("file not found: match_data.csv is missing")
 

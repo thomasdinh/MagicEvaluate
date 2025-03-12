@@ -3,3 +3,5 @@
 /.idea
 .env
 
+back_end/__pycache__/main.cpython-313.pyc
+back_end/__pycache__/match_log.cpython-313.pyc
