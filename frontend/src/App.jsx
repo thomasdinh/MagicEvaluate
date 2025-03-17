@@ -1,5 +1,5 @@
 
-import './App.css'
+import './css/App.css'
 import DeckCard from './components/DeckCard'
 import Home from './pages/Home'
 import YourDecks from './pages/YourDecks'
@@ -11,7 +11,8 @@ function App() {
   return (
       <>
       <div>
-      <main className='main-content'>
+        <Navbar/>
+        <main className='main-content'>
         <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/yourdecks" element={<YourDecks />}></Route>

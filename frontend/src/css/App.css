@@ -1,0 +1,74 @@
+/* App.css */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 0.5rem;
+    }
+}
+
+/* Dark Theme Adjustments */
+nav {
+    background-color: #1f1f1f;
+}
+
+.navbar a, .nav-link {
+    color: #e0e0e0;
+}
+
+.nav-link:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.deck_poster img {
+    filter: brightness(0.8);
+}
+
+.deck-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.info_button {
+    border-color: #e0e0e0;
+    color: #e0e0e0;
+}
+
+.info_button:hover {
+    background-color: #e0e0e0;
+    color: #1f1f1f;
+}
+
+.deck_info h3, .deck_info p {
+    color: #e0e0e0;
+}

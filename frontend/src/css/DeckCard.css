@@ -1,0 +1,93 @@
+/* DeckCard.css */
+
+.MovieCard {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    background-color: #fff;
+}
+
+.deck_poster {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+.deck_poster img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.deck-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deck_poster:hover .deck-overlay {
+    opacity: 1;
+}
+
+.info_button {
+    background-color: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.info_button:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+.deck_info {
+    padding: 1rem;
+    text-align: center;
+}
+
+.deck_info h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.deck_info p {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    color: #777;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 600px) {
+    .MovieCard {
+        max-width: 100%;
+        margin: 10px;
+    }
+
+    .deck_info h3 {
+        font-size: 1.125rem;
+    }
+
+    .deck_info p {
+        font-size: 0.875rem;
+    }
+}

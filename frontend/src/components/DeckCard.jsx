@@ -1,3 +1,5 @@
+import '../css/DeckCard.css'
+
 function DeckCard({deck}){
 
     function onInfoClick(){

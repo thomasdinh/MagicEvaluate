@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom"
+import "../css/NavBar.css"
 
 function Navbar(){
-    return 
-    (<nav>
+    return(
+    <nav>
         <div className="navbar">
             <Link to="/">Deck Track App</Link>
         </div>
@@ -12,7 +13,7 @@ function Navbar(){
 
         </div>
 
-    </nav>)
+    </nav>);
 }
 
 export default Navbar;
