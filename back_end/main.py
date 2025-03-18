@@ -1,11 +1,11 @@
-import pandas as pd
+
 from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from match_log import match_log
 from backend_calc import get_all_decks
 from uuid import uuid4 
+import httpx
 import uvicorn
 
 app = FastAPI()
@@ -25,6 +25,7 @@ class Deck(BaseModel):
     name: str
     url: str
     winrate: float
+    
 
 origins = [
     "http://localhost:5173"
@@ -63,12 +64,12 @@ async def all_decks():
         # Generate a unique ID for each deck
         deck_id = str(uuid4())  # Use uuid4 to generate a unique ID
 
-
         deck_info = {
             'id': deck_id,
             'name': name,
-            'url': f'/path/to/{name}.jpg',  # Replace with actual URL logic
+            'url': "https://cards.scryfall.io/art_crop/front/6/7/673c21f8-02b6-4ac4-b2fc-df065b4ac662.jpg?1726285172",
             'winrate': winrate
+            
         }
 
         decks.append(deck_info)

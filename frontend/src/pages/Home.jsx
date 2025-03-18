@@ -37,31 +37,29 @@ function Home(){
     const handleSearch = () =>{};
 
     return (
-    <div className="home">
-        <form onSubmit={handleSearch} className="search-form">
-            <input type="text" 
-            placeholder="Search for Decks..."
-            className="input_search_home"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button type="submit" className="searchButton"> Search</button>
-        </form>
-
-        <div className="deck-grid">
-        {decks.map((deck) => 
-            {
-                if (deck.name.toLowerCase().startsWith(searchQuery)) {
-                    return <DeckCard deck={deck} key={deck.deck_id} />;
-                }   
-                else{
-                    return null; // Return null if the condition is not met
-                }
-            }
-        )}
+        <div className="home">
+            <form onSubmit={handleSearch} className="search-form">
+                <input
+                    type="text"
+                    placeholder="Search for Decks..."
+                    className="input_search_home"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="submit" className="searchButton">Search</button>
+            </form>
+    
+            <div className="deck-grid">
+                {decks.map((deck) => {
+                    if (deck.name.toLowerCase().startsWith(searchQuery.toLowerCase())) {
+                        return <DeckCard deck={deck} key={deck.id} />;
+                    } else {
+                        return null; // Return null if the condition is not met
+                    }
+                })}
+            </div>
         </div>
-    </div>
-    )
+    );
 }
 
 export default Home
