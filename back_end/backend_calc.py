@@ -107,7 +107,7 @@ def read_json_file(filepath: str) -> Optional[Dict[str, Any]]:
         logging.error(f"No file found with name: {filepath}")
         return None
 
-def get_all_decks() -> None:
+def get_all_decks() -> Dict[str, Dict[str, int]]:
     deck_result_json = "deck_result.json"
     result = read_json_file(deck_result_json)
     if result is None:
@@ -115,6 +115,7 @@ def get_all_decks() -> None:
         load_deck_results(False)
         result = read_json_file(deck_result_json)
     logging.info(result)
+    return result
 
 if __name__ == "__main__":
     get_all_decks()

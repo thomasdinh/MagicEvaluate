@@ -11,11 +11,10 @@ function Home(){
     const [loading, setLoading] = useState(true);
 
     useEffect( () =>{
-        const loadyourDecks = async () =>{
+        const loadYourDecks = async () =>{
             try{
-                const decks = await getDecks();
-                console.log(decks)
-                setDecks(yourDecks)
+                const decks = await getDecks()
+                setDecks(decks)
             }catch (err){
                 console.log(err)
                 setError("Failed to load...")
@@ -23,8 +22,9 @@ function Home(){
             finally{
                 setLoading(false)
             }
-            
+    
         }
+        loadYourDecks()
     }, [])
     /*const decks = [
         {deck_id: 1, name: "Aesi", winrate: "50.00"},
