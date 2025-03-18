@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from match_log import match_log
 from backend_calc import get_all_decks
+from uuid import uuid4 
 import uvicorn
 
 app = FastAPI()
@@ -20,6 +21,7 @@ class MatchLogModel(BaseModel):
     match_id: int
 
 class Deck(BaseModel):
+    id: str
     name: str
     url: str
     winrate: float
@@ -58,7 +60,12 @@ async def all_decks():
         total_games = wins + lose
         winrate = (wins / total_games) * 100 if total_games > 0 else 0
 
+        # Generate a unique ID for each deck
+        deck_id = str(uuid4())  # Use uuid4 to generate a unique ID
+
+
         deck_info = {
+            'id': deck_id,
             'name': name,
             'url': f'/path/to/{name}.jpg',  # Replace with actual URL logic
             'winrate': winrate
