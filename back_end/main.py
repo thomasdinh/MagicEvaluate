@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from match_log import match_log
+from backend_calc import get_all_decks
 import uvicorn
 
 app = FastAPI()
@@ -18,6 +19,10 @@ class MatchLogModel(BaseModel):
     group_id: int
     match_id: int
 
+class Deck(BaseModel):
+    name: str
+    url: str
+    winrate: float
 
 origins = [
     "http://localhost:3000"
@@ -40,6 +45,28 @@ def root():
 @app.get("/get_best_wr_deck")
 def calc_best_wr_deck():
     return {"deck": "Edgar Markov"}
+
+@app.get("/all_decks", response_model=List[Deck])
+async def all_decks():
+    decks = []
+
+    deck_data = get_all_decks()
+
+    for name, stats in deck_data.items():
+        wins = stats['wins']
+        lose = stats['lose']
+        total_games = wins + lose
+        winrate = (wins / total_games) * 100 if total_games > 0 else 0
+
+        deck_info = {
+            'name': name,
+            'url': f'/path/to/{name}.jpg',  # Replace with actual URL logic
+            'winrate': winrate
+        }
+
+        decks.append(deck_info)
+
+    return decks
 
 
 @app.post("/add_match_log")

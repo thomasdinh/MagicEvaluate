@@ -7,7 +7,7 @@ function DeckCard({deck}){
     }
 
     return (
-    <div className = "MovieCard">
+    <div className = "DeckCard">
         <div className="deck_poster">
             <img src="deck.url" alt=" deck.name"></img>
             <div className="deck-overlay">
@@ -18,7 +18,7 @@ function DeckCard({deck}){
         </div>
         <div className="deck_info">
             <h3>{deck.name}</h3>
-            <p>{deck.winrate}</p>
+            <p>{deck.winrate.toFixed(2)}%</p>
         </div>
     </div>
     )

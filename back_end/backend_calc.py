@@ -4,182 +4,117 @@ import json
 import os
 from dotenv import load_dotenv, set_key
 from datetime import datetime
+from typing import Optional, Dict, Any
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 default_match_log_path = "../match_data/match_data.csv"
 
-
-def read_match_logs(filepath = None):
+def read_match_logs(filepath: Optional[str] = None) -> Optional[pd.DataFrame]:
     csv_filepath = default_match_log_path if filepath is None else filepath
-    #print("Reading matchlogs")
     try:
         match_df = pd.read_csv(csv_filepath)
-        # print(match_df)
+        return match_df
     except FileNotFoundError:
-        print("file not found: match_data.csv is missing")
+        logging.error("File not found: match_data.csv is missing")
+        return None
 
-    return match_df
+def load_deck_results(exclude_draw: bool = False) -> Dict[str, Dict[str, int]]:
+    deck_result_json = "deck_result_no_draw.json" if exclude_draw else "deck_result.json"
 
-def load_deck_results(exclude_draw=False):
-    
-    
-    deck_result_json = "deck_result.json"
-    
-    if exclude_draw:
-        deck_result_json = "deck_result_no_draw.json"
     try:
-        # Load the data
-        match_file = open(deck_result_json, 'r+')
-        
-        # Get the last modified time of the match_data.csv file
-        last_modified_str = modification_date(default_match_log_path)
-        last_modified_datetime = datetime.fromisoformat(f'{last_modified_str}')
-        # print(f'{default_match_log_path} last mod.:{last_modified_datetime}')
-        
+        last_modified_datetime = modification_date(default_match_log_path)
         load_dotenv()
-        # Get the last known modified time from the .env file
         last_known_modified_time_str = os.getenv('RESULT_LAST_MODIFIED')
-        # Convert the string to a datetime object
-        last_known_modified_datetime = datetime.strptime(str(last_known_modified_time_str), "%Y-%m-%d %H:%M:%S.%f")
 
-
-        if last_known_modified_time_str is None:    
-            print("Environment variable RESULT_LAST_MODIFIED is not set or loaded from .env file.")
+        if last_known_modified_time_str is None:
+            logging.warning("Environment variable RESULT_LAST_MODIFIED is not set.")
+            last_known_modified_datetime = datetime.min
         else:
-            # Convert the string to a datetime object
-            # print("Last known modified time:", last_known_modified_datetime)
-            print()
+            last_known_modified_datetime = datetime.strptime(last_known_modified_time_str, "%Y-%m-%d %H:%M:%S.%f")
 
-        #last_known_modified_datetime = datetime.fromisoformat(f'{last_known_modified_time_str}')
-        print(f'last modified: {last_modified_datetime}, last_known modified: {last_known_modified_datetime}, Were there changes? : {last_modified_datetime > last_known_modified_datetime}')
-
-        if( last_modified_datetime <= last_known_modified_datetime):
-            print(f'The match_data.csv has not been changed since the last time')
-            print("found json file - loading data from json...")
-            deck_result_dict = json.load(match_file)
-            print("skipped calc")
+        if last_modified_datetime <= last_known_modified_datetime:
+            logging.info("Match data has not been modified. Loading from JSON.")
+            with open(deck_result_json, 'r') as match_file:
+                deck_result_dict = json.load(match_file)
             return deck_result_dict
         else:
-            print(f'The match_data has been changed since the last time. Recalculating')
-            deck_result_dict = calc_deck_results(deck_result_json, exclude_draw= exclude_draw)
-            # .env changes
-            load_dotenv() 
-            os.environ['RESULT_LAST_MODIFIED'] = f'{last_modified_str}'
-            set_key('.env','RESULT_LAST_MODIFIED', str(last_modified_str))
-
-            # Verify the change
-            updated_value = os.getenv('RESULT_LAST_MODIFIED')
-            print(f"Updated RESULT_LAST_MODIFIED: {updated_value}")
-
+            logging.info("Match data has been modified. Recalculating results.")
+            deck_result_dict = calc_deck_results(deck_result_json, exclude_draw)
+            os.environ['RESULT_LAST_MODIFIED'] = last_modified_datetime.isoformat()
+            set_key('.env', 'RESULT_LAST_MODIFIED', last_modified_datetime.isoformat())
             return deck_result_dict
     except IOError:
-        print("json file for analyzed match not found. creating new file")
-        
-    deck_result_dict = calc_deck_results(deck_result_json, exclude_draw= exclude_draw)   
-    return deck_result_dict
+        logging.error("JSON file for analyzed match not found. Creating new file.")
 
-def calc_deck_results(deck_result_json, exclude_draw=False):
+    return calc_deck_results(deck_result_json, exclude_draw)
+
+def calc_deck_results(deck_result_json: str, exclude_draw: bool = False) -> Dict[str, Dict[str, int]]:
     wins_key = "wins"
     losses_key = "lose"
     match_df = read_match_logs()
     deck_result_dict = {}
+
+    if match_df is None:
+        return deck_result_dict
 
     match_deck_lists = match_df['Decklist'].values
     match_deck_results = match_df['match_result'].values
     for decks, results in zip(match_deck_lists, match_deck_results):
         participated_decks = [deck.strip().lower() for deck in decks.strip().split(",")]
         match_result = [int(x) for x in results.split(",")]
-        
+
         if exclude_draw and find_draw(match_result):
-                continue  # Skip the rest of the loop for this match
-        
+            continue
+
         for deck in participated_decks:
-            
             if deck not in deck_result_dict:
                 deck_result_dict[deck] = {wins_key: 0, losses_key: 0}
 
             deck_result_dict[deck][wins_key] += did_deck_win_result(participated_decks, match_result, deck)
             deck_result_dict[deck][losses_key] += did_deck_lose_result(participated_decks, match_result, deck)
-        
+
     with open(deck_result_json, 'w') as fp:
-        json.dump(deck_result_dict, fp, indent=4)    
+        json.dump(deck_result_dict, fp, indent=4)
     return deck_result_dict
 
-def convert_str_to_date(date):
-    try:
-        date_object = datetime.strptime(date, "%d.%m.%y")
-        print(date_object)
-        return date_object
-    except ValueError:
-        print("Invalid date format.")
-
-def did_deck_win_result(deck_list, match_result , deckname):
-    for i in range(len(deck_list)):
-        if deckname == deck_list[i]:
+def did_deck_win_result(deck_list: list, match_result: list, deckname: str) -> int:
+    for i, deck in enumerate(deck_list):
+        if deckname == deck:
             return match_result[i]
     return 0
 
-def did_deck_lose_result(deck_list, match_result, deckname):
-    for i in range(len(deck_list)):
-        if deckname == deck_list[i]:
-            return 1 - match_result[i] 
+def did_deck_lose_result(deck_list: list, match_result: list, deckname: str) -> int:
+    for i, deck in enumerate(deck_list):
+        if deckname == deck:
+            return 1 - match_result[i]
     return 0
 
-def find_draw(match_result):
-    occurrence = match_result.count(1)
-    if occurrence > 2:
-        return True
-    return False
+def find_draw(match_result: list) -> bool:
+    return match_result.count(1) > 2
 
-def find_date_last_entry_match_csv(csv_file = None):
-    match_df = read_match_logs(csv_file)
-    match_dates = match_df['date'].values
-    return match_dates[-1]
-
-
-
-win_rates = {}
-
-def find_best_decks(min_matches=3, top_placements=1,exclude_draw = False):
-    win_rates = {}
-    top_deck_dict = load_deck_results(exclude_draw=exclude_draw)
-
-    # Calculate win rates for players with at least `min_matches` games
-    for deck, result in top_deck_dict.items():
-        wins = result['wins']
-        losses = result['lose']
-        total_games = wins + losses
-
-        if total_games >= min_matches:
-            win_rate = (wins / total_games) * 100 if total_games > 0 else 0
-            win_rates[deck] = win_rate
-
-    # Sort the dictionary by win rate in descending order
-    sorted_win_rates = dict(sorted(win_rates.items(), key=lambda item: item[1], reverse=True))
-
-    # Prepare the results string
-    results = f"Top {top_placements} decks by win rate:\n"
-    top_decks_list = list(sorted_win_rates.items())[:top_placements]
-
-    for deck, win_rate in top_decks_list:
-        deck_info = f'Deck: {deck.capitalize().ljust(18)} WR: {win_rate:.2f}%'
-        print(deck_info)
-        results += deck_info + '\n'
-
-    return results
-
-
-def read_json_file(filepath):
-    try:
-        with open(filepath) as json_file:
-            json_data = json.load(json_file)
-            return json_data
-    except:
-        print(f"No File found with name: {filepath}!")
-
-# https://stackoverflow.com/questions/237079/how-do-i-get-file-creation-and-modification-date-times    
-def modification_date(filename):
+def modification_date(filename: str) -> datetime:
     t = os.path.getmtime(filename)
     return datetime.fromtimestamp(t)
 
+def read_json_file(filepath: str) -> Optional[Dict[str, Any]]:
+    try:
+        with open(filepath, 'r') as json_file:
+            return json.load(json_file)
+    except FileNotFoundError:
+        logging.error(f"No file found with name: {filepath}")
+        return None
+
+def get_all_decks() -> None:
+    deck_result_json = "deck_result.json"
+    result = read_json_file(deck_result_json)
+    if result is None:
+        logging.info("Calculating win rates.")
+        load_deck_results(False)
+        result = read_json_file(deck_result_json)
+    logging.info(result)
+
 if __name__ == "__main__":
-    find_best_decks(0,40)
+    get_all_decks()

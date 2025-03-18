@@ -1,17 +1,38 @@
 import DeckCard from "../components/DeckCard"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../css/Home.css"
+import { getDecks } from "../services/api";
 
 function Home(){
-    const [searchQuery, setSearchQuery] = useState ("");
 
-    const decks = [
+    const [searchQuery, setSearchQuery] = useState ("");
+    const [decks, setDecks] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect( () =>{
+        const loadyourDecks = async () =>{
+            try{
+                const decks = await getDecks();
+                console.log(decks)
+                setDecks(yourDecks)
+            }catch (err){
+                console.log(err)
+                setError("Failed to load...")
+            }
+            finally{
+                setLoading(false)
+            }
+            
+        }
+    }, [])
+    /*const decks = [
         {deck_id: 1, name: "Aesi", winrate: "50.00"},
         {deck_id: 2, name: "Pantlaza", winrate: "15.00"},
         {deck_id: 3, name: "Kaalia", winrate: "20.00"},
         {deck_id: 4, name: "Temmet", winrate: "0.00"},
         {deck_id: 5, name: "aehomas", winrate: "100.00"},
-    ] 
+    ]*/
 
     const handleSearch = () =>{};
 
