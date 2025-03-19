@@ -6,6 +6,7 @@ from dotenv import load_dotenv, set_key
 from datetime import datetime
 from typing import Optional, Dict, Any
 import logging
+import requests
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -117,5 +118,37 @@ def get_all_decks() -> Dict[str, Dict[str, int]]:
     logging.info(result)
     return result
 
+def get_art_crop_url(card_name):
+    # Scryfall API endpoint for searching cards by name
+    url = f"https://api.scryfall.com/cards/search?q={card_name}"
+
+    # Make the request to the Scryfall API
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+
+        # Check if there are any results
+        if data['data']:
+            card = data['data'][0]
+
+            # Check if 'image_uris' is present
+            if 'image_uris' in card:
+                return card['image_uris'].get('art_crop')
+
+            # Check for double-faced cards
+            if 'card_faces' in card:
+                for face in card['card_faces']:
+                    if 'image_uris' in face:
+                        return face['image_uris'].get('art_crop')
+
+            return "Art crop URL not found for this card."
+        else:
+            return "No cards found with that name."
+    else:
+        return f"Error: Unable to fetch data (Status code: {response.status_code})"
+
 if __name__ == "__main__":
-    get_all_decks()
+    print(get_art_crop_url("Tinybones"))

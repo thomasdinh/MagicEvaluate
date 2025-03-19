@@ -3,7 +3,7 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from backend_calc import get_all_decks
+from backend_calc import get_all_decks,get_art_crop_url
 from uuid import uuid4 
 import httpx
 import uvicorn
@@ -64,10 +64,12 @@ async def all_decks():
         # Generate a unique ID for each deck
         deck_id = str(uuid4())  # Use uuid4 to generate a unique ID
 
+        art_url = get_art_crop_url(name)
+
         deck_info = {
             'id': deck_id,
             'name': name,
-            'url': "https://cards.scryfall.io/art_crop/front/6/7/673c21f8-02b6-4ac4-b2fc-df065b4ac662.jpg?1726285172",
+            'url':  art_url,
             'winrate': winrate
             
         }
