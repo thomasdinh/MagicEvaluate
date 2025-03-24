@@ -41,6 +41,23 @@
   .search-button:hover {
     background-color: #1f1f1f;
   }
+
+  .input_search_home {
+    padding: 10px; /* Adds space inside the input box */
+    font-size: 14px;
+    border: 1px solid #555; 
+    border-radius: 4px;
+    background-color: #333; 
+    color: #ddd;
+    width: 300px; 
+    box-sizing: border-box; 
+  }
+
+  .input_search_home:focus {
+    border-color: #0056b3; /* Darker focus border color */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+  }
   
   
   @media (max-width: 639px) {

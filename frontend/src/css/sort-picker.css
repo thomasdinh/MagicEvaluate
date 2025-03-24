@@ -1,0 +1,33 @@
+/* Dark Theme for SortPicker */
+
+.sort-picker {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #444;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-left: 10px; /* - this for space between select and label*/
+    display: inline-block;
+}
+
+.sort-picker:focus {
+    outline: none;
+    border-color: #00bcd4;
+    box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
+}
+
+.sortLabel{
+    border: 5px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ffffff;
+    box-sizing: content-box;
+}
+
+
+option {
+    background-color: #333;
+    color: #ffffff;
+}
