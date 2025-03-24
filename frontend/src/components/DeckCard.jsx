@@ -9,7 +9,7 @@ function DeckCard({deck}){
     return (
     <div className = "DeckCard">
         <div className="deck_poster">
-            <img src={deck.url} alt={deck.name} onError={() => setImgSrc("src/assets/magic_commander_deck.png")}></img>
+            <img src={deck.url} alt="src/assets/magic_commander_deck.png" onError={() => setImgSrc("src/assets/magic_commander_deck.png")}></img>
             <div className="deck-overlay">
                 <button className="info_button" onClick={onInfoClick}> 
                     <sup>&#9432;</sup> 

@@ -32,19 +32,11 @@ function Home(){
     useEffect(()=>{
         console.log('Changed sort order.')
     },[sortOrder]);
-    /*const decks = [
-        {deck_id: 1, name: "Aesi", winrate: "50.00"},
-        {deck_id: 2, name: "Pantlaza", winrate: "15.00"},
-        {deck_id: 3, name: "Kaalia", winrate: "20.00"},
-        {deck_id: 4, name: "Temmet", winrate: "0.00"},
-        {deck_id: 5, name: "aehomas", winrate: "100.00"},
-    ]*/
 
     const handleSearch = () =>{};
 
     // Sorting function
     const sortedDecks = useMemo(() => {
-        console.log('Changed order');
         return [...decks].sort((a, b) => {
             switch (sortOrder) {
                 case "name_asc":
