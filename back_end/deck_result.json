@@ -4,12 +4,12 @@
         "lose": 2
     },
     "tymna": {
-        "wins": 0,
+        "wins": 1,
         "lose": 3
     },
     "urza": {
         "wins": 0,
-        "lose": 8
+        "lose": 9
     },
     "chulane": {
         "wins": 0,
@@ -32,8 +32,8 @@
         "lose": 4
     },
     "aesi": {
-        "wins": 2,
-        "lose": 2
+        "wins": 3,
+        "lose": 3
     },
     "pantlaza": {
         "wins": 3,
@@ -157,7 +157,7 @@
     },
     "temmet": {
         "wins": 0,
-        "lose": 4
+        "lose": 6
     },
     "baylen": {
         "wins": 1,
@@ -165,6 +165,14 @@
     },
     "obeka 2": {
         "wins": 0,
-        "lose": 1
+        "lose": 2
+    },
+    "voja": {
+        "wins": 1,
+        "lose": 2
+    },
+    "animar": {
+        "wins": 0,
+        "lose": 2
     }
 }

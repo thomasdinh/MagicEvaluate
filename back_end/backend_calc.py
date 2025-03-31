@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 DEFAULT_MATCH_LOG_PATH = "../match_data/match_data.csv"
 DECK_RESULT_JSON = "deck_result.json"
 DECK_RESULT_NO_DRAW_JSON = "deck_result_no_draw.json"
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 
 def read_match_logs(filepath: Optional[str] = None) -> Optional[pd.DataFrame]:
     """Read match logs from a CSV file."""
@@ -56,12 +56,17 @@ def calc_deck_results(deck_result_json: str, exclude_draw: bool = False) -> Dict
     save_json_file(deck_result_json, deck_result_dict)
     return deck_result_dict
 
+def strip_brackets(result: str) -> str:
+    """Strip brackets from the match result string."""
+    return result.strip('[]')
+
 def process_match_results(match_df: pd.DataFrame, exclude_draw: bool) -> Dict[str, Dict[str, int]]:
     """Process match results to calculate wins and losses for each deck."""
     deck_result_dict = {}
     for decks, results in zip(match_df['Decklist'], match_df['match_result']):
         participated_decks = [deck.strip().lower() for deck in decks.split(",")]
-        match_result = list(map(int, results.split(",")))
+        stripped_results = strip_brackets(results)
+        match_result = list(map(int, stripped_results.split(",")))
 
         if exclude_draw and find_draw(match_result):
             continue
@@ -181,4 +186,4 @@ def add_match(decklist: str, result: Optional[int] = None, filepath: Optional[st
         logging.error("File not found: %s", csv_filepath)
 
 if __name__ == "__main__":
-    add_match("Tymna,Obeka2,Voja,Urza")
+    load_deck_results(False)
