@@ -32,4 +32,6 @@ async def isReady(ctx):
 async def top_deck(ctx , min_matches=3,rank=1):
     await ctx.send(find_best_decks(min_matches= min_matches, top_placements= rank))
 
+
+
 bot.run(BOT_TOKEN)

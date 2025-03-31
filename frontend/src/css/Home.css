@@ -43,7 +43,7 @@
   }
 
   .input_search_home {
-    padding: 10px; /* Adds space inside the input box */
+    padding: 10px; 
     font-size: 14px;
     border: 1px solid #555; 
     border-radius: 4px;
@@ -54,7 +54,7 @@
   }
 
   .input_search_home:focus {
-    border-color: #0056b3; /* Darker focus border color */
+    border-color: #0056b3; 
     outline: none;
     box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
   }
