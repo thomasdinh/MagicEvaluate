@@ -185,5 +185,36 @@ def add_match(decklist: str, result: Optional[int] = None, filepath: Optional[st
     except FileNotFoundError:
         logging.error("File not found: %s", csv_filepath)
 
+def find_top_deck(top_rank = 3,min_matches = 3) -> str:
+    decks= []
+    deck_data = get_all_decks()
+    for name, stats in deck_data.items():
+        wins = stats['wins']
+        lose = stats['lose']
+        total_games = wins + lose
+
+        if total_games < min_matches:
+            continue
+
+        winrate = (wins / total_games) * 100 if total_games > 0 else 0
+
+        deck_info = {
+            'name' : name,
+            'wins' : wins,
+            'loses': lose,
+            'winrate': winrate,
+            'total matches': total_games
+        }
+        decks.append(deck_info)
+    
+    sorted_decks = sorted(decks, key=lambda x: x['winrate'], reverse=True)
+    top_decks_string = "\n".join(
+        f"Name: {deck['name'].ljust(30)} Winrate: {deck['winrate']:.2f}%"
+        for deck in sorted_decks[:top_rank]
+    )
+
+    return top_decks_string
+
+
 if __name__ == "__main__":
-    load_deck_results(False)
+    print(find_top_deck(3,1))

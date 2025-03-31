@@ -3,7 +3,7 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from backend_calc import get_all_decks,get_art_crop_url
+from backend_calc import get_all_decks,get_art_crop_url, find_top_deck
 from uuid import uuid4 
 import httpx
 import uvicorn
@@ -46,8 +46,8 @@ def root():
 
 
 @app.get("/get_best_wr_deck")
-def calc_best_wr_deck():
-    return {"deck": "Edgar Markov"}
+async def calc_best_wr_deck():
+    return await find_top_deck(1,3)
 
 @app.get("/all_decks", response_model=List[Deck])
 async def all_decks():
