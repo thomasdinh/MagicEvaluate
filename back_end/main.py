@@ -100,6 +100,6 @@ def add_match_log():
 def get_best_wr_deck(top_ranks=1, group_id=None):
     return "Load"
 
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
-if __name__ == "main":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
