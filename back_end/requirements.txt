@@ -1,7 +1,8 @@
 pandas
 discord.py
-audioop-lts
 python-dotenv
 fastapi
+fastapi[standard]
 uvivorn
 pydantic
+requestspip

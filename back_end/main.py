@@ -47,7 +47,7 @@ def root():
 
 @app.get("/get_best_wr_deck")
 async def calc_best_wr_deck():
-    return await find_top_deck(1,3)
+    return find_top_deck(1,3)
 
 @app.get("/all_decks", response_model=List[Deck])
 async def all_decks():
