@@ -29,7 +29,8 @@ class Deck(BaseModel):
 
 origins = [
     "http://localhost:5173",
-    "https://magicevaluate.onrender.com/" # your website domain
+    "https://magicevaluate.onrender.com/", # your website domain
+    "http://magicevaluate.onrender.com/"
 ]
 
 app.add_middleware(

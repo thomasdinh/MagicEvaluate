@@ -1,5 +1,5 @@
 export const getDecks = async () => {
-    const BASE_URL = 'https://magicevaluate.onrender.com//all_decks'; // Update with your FastAPI server URL http://localhost:8000 for local
+    const BASE_URL = 'https://magicevaluate.onrender.com/all_decks'; // Update with your FastAPI server URL http://localhost:8000 for local
     const SCRYFALL_URL = 'https://api.scryfall.com/cards/search?q='
 
     try {
