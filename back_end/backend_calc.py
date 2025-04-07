@@ -217,4 +217,5 @@ def find_top_deck(top_rank = 3,min_matches = 3) -> str:
 
 
 if __name__ == "__main__":
-    print(find_top_deck(3,1))
+    load_deck_results(False)
+    
